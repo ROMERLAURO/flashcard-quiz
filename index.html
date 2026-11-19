@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard-quiz</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- File-reading libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <!-- AUTHENTICATION -->
+  <section id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand auth-brand">
+        <div class="brand-icon">S</div>
+        <span>STUDY</span>
+      </div>
+
+      <div id="loginPanel">
+        <h1>Welcome back!</h1>
+        <p class="muted">Log in to continue your learning journey.</p>
+
+        <form id="loginForm">
+          <label>Email address</label>
+          <input id="loginEmail" type="email" placeholder="Enter your email" required>
+
+          <label>Password</label>
+          <input id="loginPassword" type="password" placeholder="Enter your password" required>
+
+          <button class="primary-btn full-btn" type="submit">Log In</button>
+        </form>
+
+        <p class="auth-switch">Don't have an account?
+          <button type="button" class="text-btn" id="showRegister">Create an account</button>
+        </p>
+      </div>
+
+      <div id="registerPanel" class="hidden">
+        <h1>Create your account</h1>
+        <p class="muted">Start studying smarter with Recall.</p>
+
+        <form id="registerForm">
+          <label>Full name</label>
+          <input id="registerName" type="text" placeholder="Your full name" required>
+
+          <label>Email address</label>
+          <input id="registerEmail" type="email" placeholder="Enter your email" required>
+
+          <label>Password</label>
+          <input id="registerPassword" type="password" minlength="6"
+                 placeholder="At least 6 characters" required>
+
+          <label>Confirm password</label>
+          <input id="confirmPassword" type="password"
+                 placeholder="Confirm your password" required>
+
+          <button class="primary-btn full-btn" type="submit">Create Account</button>
+        </form>
+
+        <p class="auth-switch">Already have an account?
+          <button type="button" class="text-btn" id="showLogin">Log in</button>
+        </p>
+      </div>
+
+      <p id="authMessage" class="message"></p>
+    </div>
+  </section>
+
+  <!-- MAIN APPLICATION -->
+  <div id="app" class="app hidden">
+
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">R</div>
+        <span>Recall</span>
+      </div>
+
+      <div class="sidebar-label">MENU</div>
+      <nav>
+        <button class="nav-link active" data-page="dashboard">▦ <span>Dashboard</span></button>
+        <button class="nav-link" data-page="materials">▤ <span>My Materials</span></button>
+        <button class="nav-link" data-page="study">✧ <span>Study Session</span></button>
+        <button class="nav-link" data-page="flashcards">▣ <span>Flashcards</span></button>
+        <button class="nav-link" data-page="quiz">☑ <span>Quiz</span></button>
+        <button class="nav-link" data-page="progress">▥ <span>My Progress</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="user-card">
+          <div class="avatar" id="userAvatar">S</div>
+          <div class="user-info">
+            <strong id="sidebarUser">Student</strong>
+            <small>Student account</small>
+          </div>
+        </div>
+        <button id="logoutBtn" class="logout-btn">↪ Log out</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <span class="topbar-small">YOUR PERSONAL STUDY SPACE</span>
+          <h2 id="pageHeading">Dashboard</h2>
+        </div>
+        <button class="top-upload" id="topUploadBtn">＋ Upload Material</button>
+      </header>
+
+      <!-- DASHBOARD -->
+      <section id="dashboardPage" class="page active-page">
+        <div class="welcome-banner">
+          <div>
+            <span class="eyebrow">LET'S KEEP LEARNING</span>
+            <h1 id="welcomeName">Welcome back!</h1>
+            <p>Your learning journey continues here. Keep your momentum going.</p>
+            <button class="light-btn" data-go="study">Start studying →</button>
+          </div>
+          <div class="banner-decoration">✦</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon purple">▤</span>
+            <p>Uploaded Materials</p>
+            <h2 id="statMaterials">0</h2>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon blue">▣</span>
+            <p>Total Flashcards</p>
+            <h2 id="statCards">0</h2>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon green">✓</span>
+            <p>Mastered Cards</p>
+            <h2 id="statMastered">0</h2>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon orange">★</span>
+            <p>Quizzes Completed</p>
+            <h2 id="statQuizzes">0</h2>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <h2>Recent Materials</h2>
+            <p class="muted">Your recently uploaded study modules.</p>
+          </div>
+          <button class="text-btn" data-go="materials">View all →</button>
+        </div>
+        <div id="recentMaterials" class="material-list"></div>
+
+        <div class="quick-actions">
+          <div>
+            <h2>Ready to study?</h2>
+            <p class="muted">Choose a study mode and review your uploaded modules.</p>
+          </div>
+          <button class="primary-btn" data-go="study">Start a session →</button>
+        </div>
+      </section>
+
+      <!-- MATERIALS -->
+      <section id="materialsPage" class="page">
+        <div class="page-intro">
+          <h1>My Materials</h1>
+          <p class="muted">Upload your learning materials. Recall will use their content to create study activities.</p>
+        </div>
+
+        <div class="upload-box" id="dropZone">
+          <div class="upload-icon">↑</div>
+          <h2>Upload your study materials</h2>
+          <p>Drag and drop files here, or browse your device.</p>
+          <p class="file-types">PDF, PPTX, DOCX, TXT · Maximum 20 MB per file</p>
+          <input type="file" id="fileInput" accept=".pdf,.pptx,.docx,.txt" multiple hidden>
+          <button class="primary-btn" id="browseBtn">Browse Files</button>
+        </div>
+
+        <div id="uploadStatus" class="message"></div>
+
+        <div class="section-heading">
+          <div>
+            <h2>Uploaded Modules</h2>
+            <p class="muted">Your saved study materials.</p>
+          </div>
+          <span id="moduleCount" class="count-label">0 modules</span>
+        </div>
+        <div id="materialsList" class="material-list"></div>
+      </section>
+
+      <!-- STUDY MODE -->
+      <section id="studyPage" class="page">
+        <div class="page-intro">
+          <h1>Study Session</h1>
+          <p class="muted">Choose what you want to study and which modules to use.</p>
+        </div>
+
+        <div class="setup-card">
+          <h2>1. Choose your study mode</h2>
+          <div class="mode-grid">
+            <label class="mode-option">
+              <input type="radio" name="studyMode" value="flashcards">
+              <span class="mode-content">
+                <span class="mode-symbol">▣</span>
+                <strong>Flashcards</strong>
+                <small>Review terms and concepts.</small>
+              </span>
+            </label>
+            <label class="mode-option">
+              <input type="radio" name="studyMode" value="quiz">
+              <span class="mode-content">
+                <span class="mode-symbol">☑</span>
+                <strong>Quiz</strong>
+                <small>Test your understanding.</small>
+              </span>
+            </label>
+            <label class="mode-option selected">
+              <input type="radio" name="studyMode" value="both" checked>
+              <span class="mode-content">
+                <span class="mode-symbol">✧</span>
+                <strong>Both</strong>
+                <small>Flashcards followed by a quiz.</small>
+              </span>
+            </label>
+          </div>
+
+          <h2 class="setup-subheading">2. Select your source</h2>
+          <div class="source-options">
+            <label class="source-option">
+              <input type="radio" name="sourceMode" value="all" checked>
+              <span>All uploaded modules</span>
+            </label>
+            <label class="source-option">
+              <input type="radio" name="sourceMode" value="specific">
+              <span>Choose specific module(s)</span>
+            </label>
+          </div>
+
+          <div id="moduleSelector" class="module-selector hidden">
+            <p class="muted">Select the modules you want to include:</p>
+            <div id="moduleCheckboxes"></div>
+          </div>
+
+          <div class="session-summary" id="sessionSummary">
+            Your session will include flashcards and a quiz from all uploaded modules.
+          </div>
+
+          <button id="beginStudyBtn" class="primary-btn full-btn">Generate Study Session →</button>
+        </div>
+      </section>
+
+      <!-- FLASHCARDS -->
+      <section id="flashcardsPage" class="page">
+        <div class="page-intro">
+          <h1>Flashcards</h1>
+          <p class="muted">Review concepts generated from your uploaded materials.</p>
+        </div>
+
+        <div class="study-toolbar">
+          <label for="flashcardSource">Source:</label>
+          <select id="flashcardSource"></select>
+          <span id="flashcardCounter" class="count-label">0 / 0</span>
+        </div>
+
+        <div id="flashcardEmpty" class="empty-state">
+          <div class="empty-icon">▣</div>
+          <h2>No flashcards yet</h2>
+          <p>Upload materials and generate a study session first.</p>
+          <button class="primary-btn" data-go="study">Create Flashcards</button>
+        </div>
+
+        <div id="flashcardArea" class="hidden">
+          <div class="flashcard" id="flashcard">
+            <span class="card-hint">CLICK TO FLIP</span>
+            <div id="flashcardText">Question</div>
+            <span id="flashcardSide" class="flashcard-side">QUESTION</span>
+          </div>
+          <div class="flashcard-actions">
+            <button class="secondary-btn" id="previousCard">← Previous</button>
+            <button class="secondary-btn" id="flipCard">Flip Card</button>
+            <button class="secondary-btn" id="nextCard">Next →</button>
+          </div>
+          <div class="flashcard-actions">
+            <button class="review-btn" id="reviewCard">↻ Review Again</button>
+            <button class="known-btn" id="knownCard">✓ I Know This</button>
+          </div>
+          <p class="muted centered" id="flashcardSourceName"></p>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="quizPage" class="page">
+        <div class="page-intro">
+          <h1>Quiz</h1>
+          <p class="muted">Test your knowledge using questions from your materials.</p>
+        </div>
+
+        <div class="study-toolbar">
+          <label for="quizSource">Source:</label>
+          <select id="quizSource"></select>
+        </div>
+
+        <div id="quizEmpty" class="empty-state">
+          <div class="empty-icon">☑</div>
+          <h2>No quiz available</h2>
+          <p>Upload materials and generate a study session first.</p>
+          <button class="primary-btn" data-go="study">Create Quiz</button>
+        </div>
+
+        <div id="quizArea" class="quiz-card hidden">
+          <div class="quiz-progress">
+            <span id="quizCounter">Question 1</span>
+            <span id="quizScoreLabel">Score: 0</span>
+          </div>
+          <div class="progress-track"><div id="quizProgressBar"></div></div>
+          <h2 id="quizQuestion">Question goes here</h2>
+          <div id="quizChoices" class="quiz-choices"></div>
+          <p id="quizFeedback" class="quiz-feedback"></p>
+          <button id="nextQuestionBtn" class="primary-btn full-btn" disabled>Next Question →</button>
+        </div>
+
+        <div id="quizResult" class="result-card hidden">
+          <div class="result-icon">★</div>
+          <h1>Quiz Completed!</h1>
+          <p class="muted">Here is your result.</p>
+          <h2 id="finalScore">0 / 0</h2>
+          <p id="finalPercentage"></p>
+          <button class="primary-btn" id="retryQuizBtn">Try Again</button>
+          <button class="secondary-btn" data-go="study">New Study Session</button>
+        </div>
+      </section>
+
+      <!-- PROGRESS -->
+      <section id="progressPage" class="page">
+        <div class="page-intro">
+          <h1>My Progress</h1>
+          <p class="muted">Monitor your learning progress and quiz performance.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p>Study Materials</p><h2 id="progressMaterials">0</h2>
+          </div>
+          <div class="stat-card">
+            <p>Flashcards Mastered</p><h2 id="progressMastered">0</h2>
+          </div>
+          <div class="stat-card">
+            <p>Quizzes Taken</p><h2 id="progressQuizzes">0</h2>
+          </div>
+          <div class="stat-card">
+            <p>Average Score</p><h2 id="progressAverage">0%</h2>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <h2>Quiz History</h2>
+            <p class="muted">Your previous quiz results.</p>
+          </div>
+        </div>
+        <div id="quizHistory" class="history-list"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
