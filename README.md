@@ -67,3 +67,9 @@ Netlify for deployment
 LAURO, ROMER N.
 
 BSINTE 2A
+
+screenshots
+
+https://drive.google.com/file/d/1rRDGxSe6OAAmsOJJ-DIwo0N-fEl77LzH/view?usp=drivesdk
+
+https://drive.google.com/file/d/1g68anuVroql3xSnlei7dzfKLgLFBCp0r/view?usp=drivesdk
