@@ -63,3 +63,7 @@ Technologies Used
 HTML, CSS, JavaScript
 AI for text extraction and Q&A generation
 Netlify for deployment
+
+LAURO, ROMER N.
+
+BSINTE 2A
