@@ -58,6 +58,7 @@ Tracks quizzes completed and mastered cards
 HOW TO INSTALL AND RUN:
   https://github.com/ROMERLAURO/flashcard-quiz
 Open the project folder
+
 Open  in your browser or run with Live Server
 Or add to home screen 
 
