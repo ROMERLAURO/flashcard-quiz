@@ -5,6 +5,7 @@ A simple and smart web app that helps students study faster by automatically gen
 
 Live Demo
 https://statuesque-mermaid-6c69fa.netlify.app
+video Demonstration:https://drive.google.com/file/d/1mM_KcCrMsmOov3N8KVAXSvPI_O-0LLI6/view?usp=drivesdk&usp=embed_facebook
 
 Features
 
@@ -64,12 +65,8 @@ HTML, CSS, JavaScript
 AI for text extraction and Q&A generation
 Netlify for deployment
 
-LAURO, ROMER N.
-
-BSINTE 2A
-
 screenshots
 
-https://drive.google.com/file/d/1rRDGxSe6OAAmsOJJ-DIwo0N-fEl77LzH/view?usp=drivesdk
+![Dashboard](screenshot1.jpg)
 
-https://drive.google.com/file/d/1g68anuVroql3xSnlei7dzfKLgLFBCp0r/view?usp=drivesdk
+![App](screenshot2.PNG)
